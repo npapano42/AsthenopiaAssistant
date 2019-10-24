@@ -5,7 +5,7 @@ import datetime as dt
 import dlib
 import math
 
-# TODO: add to EAR_data the ordered pairs correcrtly
+# TODO: add to EAR_data the ordered pairs correctly
 
 # EAR = eye aspect ratio
 # to store in list:
@@ -30,7 +30,7 @@ start_time = dt.datetime.now()
 frame_num = 0
 
 # time list is the data array
-EAR_data = [start_time.strftime('%m/%d/%Y %H:%M')]
+EAR_data = [start_time.strftime('%m/%d/%Y %H:%M'), 0]
 
 # cancel on no webcam
 if cap is None:
@@ -48,7 +48,7 @@ while True:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     EAR = -1
     # set up telemetry
-    timestamp = str(dt.datetime.now() - start_time)
+    timestamp = str(dt.datetime.now())[11:]
     is_detecting_eyes = False
     frame_num += 1
 
@@ -68,7 +68,7 @@ while True:
         vert_len = math.sqrt(math.pow(upper_eye[0]-lower_eye[0], 2) + math.pow(upper_eye[1]-lower_eye[1], 2))
         horiz_len = math.sqrt(math.pow(left_eye[0]-right_eye[0], 2) + math.pow(left_eye[1]-right_eye[1], 2))
         EAR = round(vert_len/horiz_len, 2)
-        EAR_data.append(EAR)
+
         # on screen eye telemetry
         cv2.line(img, upper_eye, lower_eye, (255, 0, 0), 2)
         cv2.line(img, left_eye, right_eye, (255, 0, 0), 2)
@@ -79,6 +79,10 @@ while True:
             # dot each landmark
             cv2.circle(img, (x, y), 4, (255, 255, 255), -1)
 
+    # append data
+    EAR_data.append([EAR, timestamp, is_detecting_eyes])
+
+    # generate and display telemetry
     telemetry = 'Timestamp: ' + timestamp \
                 + ', eyes detecting: ' \
                 + str(is_detecting_eyes)
@@ -86,13 +90,12 @@ while True:
     if is_detecting_eyes:
         telemetry += ', EAR: ' + str(EAR)
 
-    # display telemetry
     cv2.putText(img, telemetry,
                 text_loc, font,
                 1, (255, 255, 255), 2)
 
     # show frame
-    cv2.imshow('img', img)
+    cv2.imshow('Asthenopia Assistant', img)
 
     # slice last byte and check if key pressed is esc
     if cv2.waitKey(1) == 27:
