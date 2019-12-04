@@ -5,7 +5,7 @@ times = [15, 30, 60, 'Indefinite']
 
 ### Set window layout
 sg.change_look_and_feel('DARKBLUE')
-layout = [  [sg.Text('How long should Asthenopia Assistant track your blinks?')],
+layout = [  [sg.Text('For how long should Asthenopia Assistant track your blinks?')],
             [sg.Combo([str(times[0]) + ' minutes', str(times[1]) + ' minutes', str(times[2]) + ' minutes', times[3]], enable_events=True, key='combo')],
             [sg.Button('Start',  key='start')]]
 

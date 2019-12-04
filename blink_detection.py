@@ -6,6 +6,7 @@ import dlib
 import math
 import matplotlib
 
+
 # TODO: add to EAR_data the ordered pairs correctly
 # EAR = eye aspect ratio
 # to store in list:
@@ -206,4 +207,6 @@ def start_program():
     cv2.destroyAllWindows()
 
     for i in EAR_data:
+        x = dt.datetime.now()
+        sys.stdout = open(x.strftime("%Y-%m-%d %H:%M:%S.txt"), 'a')
         print(i)
