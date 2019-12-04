@@ -19,6 +19,8 @@ import matplotlib
 
 # detector/predictor for face/eyes
 
+start_blink = False
+
 def start_program():
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -38,8 +40,6 @@ def start_program():
     if cap is None:
         print("Can't start, no webcam detected! Aborting...")
         sys.exit(0)
-
-    start_blink = False
 
     def check_blink(ear):
         global start_blink
@@ -208,5 +208,9 @@ def start_program():
 
     for i in EAR_data:
         x = dt.datetime.now()
-        sys.stdout = open(x.strftime("%Y-%m-%d %H:%M:%S.txt"), 'a')
+        import os
+        script_dir = os.path.dirname(__file__)
+        rel_path = "sessions/"
+        abs_path = os.path.join(script_dir, rel_path)
+        sys.stdout = open(rel_path + x.strftime("%Y-%m-%d %H:%M:%S.txt"), 'a')
         print(i)
