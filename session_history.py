@@ -31,8 +31,6 @@ def draw_plot(EAR, timestamp, threshold):
    ax.set_xlabel('Time')
    ax.set_ylabel('Eye Aspect Ratio (EAR)')
    plt.title('Session from ' + timestamp[0].strftime("%H:%M:%S") + ' to ' + timestamp[(len(timestamp) - 1)].strftime("%H:%M:%S"))
-   #plt.ylabel('Eye Aspect Ratio (EAR)', color='#acc2d0')
-   #plt.xlabel('Time', color='#acc2d0')
    return plt.gcf()
    figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
 
@@ -66,20 +64,28 @@ def extract_data(file):
     print(EAR_values)
     return[EAR_values, timestamps, threshold]
 
-
 sg.change_look_and_feel('DARKBLUE')
-layout = [[sg.Canvas(size=(640, 475), key='canvas')],
-          [sg.Listbox(values=sessions, size=(60, 6), enable_events=True, key='File')]]
+
+col = [[sg.Listbox(values=sessions, size=(20, 25), enable_events=True, key='File')],
+       [sg.Button('Back', key='Back'), sg.Button('Delete', key='Delete')]]
 
 # add the plot to the window
+layout =[[sg.Column(col), sg.Canvas(size=(640, 475), key='canvas')],
+         [sg.Text()]]
 
 
-window = sg.Window('Session History', layout, element_justification='center', font=("Helvetica", 15), finalize=True)
+window = sg.Window('Session History', layout, element_justification='center', font=("Helvetica", 15), finalize=True).Finalize()
 
 while True:
     event, values = window.read()
     if event in (None, 'Cancel'):
         break
+    elif event == 'Back':
+        window.close()
+    elif event == 'Delete':
+        os.remove(r"sessions/"+values['File'][0])
+        sessions = os.listdir("sessions/")
+        window.FindElement('File').Update(values=sessions)
     elif event == 'File':
         graph_helper = extract_data(values['File'])
         fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(graph_helper[0], graph_helper[1], graph_helper[2]))
