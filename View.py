@@ -1,38 +1,27 @@
-from tkinter import *
-from tkinter.ttk import Combobox
+import PySimpleGUI as sg
 import blink_detection
 
-### Create window object
-root = Tk()
-root.title('Asthenopia Assistant')
-root.geometry('750x350')
+times = [15, 30, 60, 'Indefinite']
 
+### Set window layout
+sg.change_look_and_feel('DARKBLUE')
+layout = [  [sg.Text('How long should Asthenopia Assistant track your blinks?')],
+            [sg.Combo([str(times[0]) + ' minutes', str(times[1]) + ' minutes', str(times[2]) + ' minutes', times[3]], enable_events=True, key='combo')],
+            [sg.Button('Start',  key='start')]]
 
-# Title
-part_text = StringVar()
-part_label = Label(root, text='Asthenopia Assistant', font=('bold', 30), pady=20)
-part_label.pack(side='top')
+### Create the Window
+window = sg.Window('Asthenopia Assistant', layout, element_justification='center', font=("Helvetica", 15))
+# Event Loop to process "events" and get the "values" of the inputs
+while True:
+    event, values = window.read()
+    if event in ('start'):   # if user closes window or clicks cancel
+        try:
+            print(int(values['combo'][:2]))
+        except:
+            print(-1)
+        blink_detection.start_program()
+        break
+    if event is None:
+        break
+window.close()
 
-# Start Label
-part_text = StringVar()
-part_label = Label(root, text='Select Time Interval', font=('bold', 20), pady=20)
-part_label.pack(side='top')
-
-#Dropdown options
-time = StringVar()
-time_Options = ['15 minutes', '30 minutes', '60 minutes', 'Indefinte']
-combo = Combobox(root, values =time_Options)
-combo.pack(side = 'top')
-
-#Defining Start function
-def startProgram():
-    root.withdraw() #Hide homescreen
-    print(combo.get())
-    b= blink_detection.start_program() # call blink detection
-
-#Start Button
-start_Button = Button(root, text ='Start', command = startProgram)
-start_Button.pack(side='top')
-
-#Start program
-root.mainloop()
