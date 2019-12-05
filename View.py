@@ -25,6 +25,8 @@ while True:
         break
     if event in ('History'):
         import session_history
+        import importlib
+        importlib.reload(session_history)
     if event is None:
         break
 window.close()

@@ -185,10 +185,10 @@ def start_program():
             avg += ear_threshold_calc[i][0]
         if ear_threshold_calc[i][0] > ear_max:
             ear_max = ear_threshold_calc[i][0]
-        if ear_threshold_calc[i][0] < ear_min:
+        if ear_threshold_calc[i][0] < ear_min and ear_threshold_calc[i][0] > 0:
             ear_min = ear_threshold_calc[i][0]
 
-    avg /= 50
+    avg /= calibration_time
     ear_threshold = ear_min + 0.2 * (ear_max - ear_min)
     EAR_data[1] = ear_threshold
 

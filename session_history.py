@@ -72,6 +72,8 @@ def sessionlen(timestamps):
   lastTimeStamp = timestamps[len(timestamps)-1]
   #print(lastTimeStamp)
   sessionlengthobj = lastTimeStamp-firstTimeStamp
+  global length
+  length = sessionlengthobj
   return sessionlengthobj
 
 #total session blinks and helper function
@@ -85,13 +87,17 @@ def blinksTotal(EAR_values,threshold):
       currentlyblinking = True
     if sample>threshold:
       currentlyblinking = False
+  global blinks
+  blinks = blinkcounter
   return blinkcounter
 
 #average blinks per minute for session
 def bpmAVG(EAR_values,timestamps,threshold):
   #print(blinksTotal(EAR_values))
   #print(sessionlen(timestamps).total_seconds())
-  avg = (blinksTotal(EAR_values,threshold)/sessionlen(timestamps).total_seconds())*60
+  avg = round((blinksTotal(EAR_values,threshold)/sessionlen(timestamps).total_seconds())*60, 2)
+  global average
+  average = avg
   return avg
 
 
@@ -106,6 +112,10 @@ def bpmHigh(EAR_values,timestamps):
 def pbmLow(EAR_values,timestamps):
   pass
 
+length = np.nan
+blinks = np.nan
+average = np.nan
+
 sg.change_look_and_feel('DARKBLUE')
 
 col = [[sg.Listbox(values=sessions, size=(20, 25), enable_events=True, key='File')],
@@ -113,7 +123,10 @@ col = [[sg.Listbox(values=sessions, size=(20, 25), enable_events=True, key='File
 
 # add the plot to the window
 layout =[[sg.Column(col), sg.Canvas(size=(640, 475), key='canvas')],
-         [sg.Text()]]
+         [sg.Text('Session Length: ', font=("Helvetica", 25)), sg.Text(str(length), font=("Helvetica", 25), key='length'),
+          sg.Text('|  Total Blinks: ', font=("Helvetica", 25)), sg.Text(blinks, font=("Helvetica", 25), key='blinks'),
+          sg.Text('|  Blinks/min (avg): ', font=("Helvetica", 25)),  sg.Text(average, font=("Helvetica", 25), key='average')]]
+       #  [sg.Text(length, font=("Helvetica", 25)), sg.Text(blinks, font=("Helvetica", 25)), sg.Text(average, font=("Helvetica", 25))]]
 
 
 window = sg.Window('Session History', layout, element_justification='center', font=("Helvetica", 15), finalize=True).Finalize()
@@ -134,9 +147,12 @@ while True:
         totalsessionBlinks = blinksTotal(statistics[0],statistics[2])
         bpmAverage = bpmAVG(statistics[0],statistics[1],statistics[2])
         print("Session Length: ", sessionlength)
-        print("Blinks in this session: ",totalsessionBlinks)
-        print("Average Blinks Per Minute: ",bpmAverage)
-
+        print("|  Blinks in this session: ",totalsessionBlinks)
+        print("|  Average Blinks Per Minute: ",bpmAverage)
+        window.FindElement('length').Update(str(int(length.seconds//60))+ ":" + str(int(length.seconds%60)))
+        window.FindElement('blinks').Update(blinks)
+        window.FindElement('average').Update(average)
+        print(average)
         fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(statistics[0], statistics[1], statistics[2]))
 
 
