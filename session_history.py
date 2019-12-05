@@ -64,6 +64,48 @@ def extract_data(file):
     print(EAR_values)
     return[EAR_values, timestamps, threshold]
 
+
+#total session length, and helper function
+def sessionlen(timestamps):
+  firstTimeStamp = timestamps[0]
+  #print(firstTimeStamp)
+  lastTimeStamp = timestamps[len(timestamps)-1]
+  #print(lastTimeStamp)
+  sessionlengthobj = lastTimeStamp-firstTimeStamp
+  return sessionlengthobj
+
+#total session blinks and helper function
+def blinksTotal(EAR_values,threshold):
+  blinkcounter = 0
+  currentlyblinking = False
+  for sample in EAR_values:
+    if sample<=threshold and not currentlyblinking:
+      blinkcounter+=1
+      #print("BLINK:",blinkcounter)
+      currentlyblinking = True
+    if sample>threshold:
+      currentlyblinking = False
+  return blinkcounter
+
+#average blinks per minute for session
+def bpmAVG(EAR_values,timestamps,threshold):
+  #print(blinksTotal(EAR_values))
+  #print(sessionlen(timestamps).total_seconds())
+  avg = (blinksTotal(EAR_values,threshold)/sessionlen(timestamps).total_seconds())*60
+  return avg
+
+
+
+
+
+#TODO
+def bpmHigh(EAR_values,timestamps):
+  pass
+
+#TODO
+def pbmLow(EAR_values,timestamps):
+  pass
+
 sg.change_look_and_feel('DARKBLUE')
 
 col = [[sg.Listbox(values=sessions, size=(20, 25), enable_events=True, key='File')],
@@ -88,6 +130,13 @@ while True:
         window.FindElement('File').Update(values=sessions)
     elif event == 'File':
         graph_helper = extract_data(values['File'])
+        sessionlength = sessionlen(statistics[1])
+        totalsessionBlinks = blinksTotal(statistics[0],statistics[2])
+        bpmAverage = bpmAVG(statistics[0],statistics[1],statistics[2])
+        print("Session Length: ", sessionlength)
+        print("Blinks in this session: ",totalsessionBlinks)
+        print("Average Blinks Per Minute: ",bpmAverage)
+
         fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(graph_helper[0], graph_helper[1], graph_helper[2]))
 
 
