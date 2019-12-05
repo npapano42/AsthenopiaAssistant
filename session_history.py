@@ -129,7 +129,7 @@ while True:
         sessions = os.listdir("sessions/")
         window.FindElement('File').Update(values=sessions)
     elif event == 'File':
-        graph_helper = extract_data(values['File'])
+        statistics = extract_data(values['File'])
         sessionlength = sessionlen(statistics[1])
         totalsessionBlinks = blinksTotal(statistics[0],statistics[2])
         bpmAverage = bpmAVG(statistics[0],statistics[1],statistics[2])
@@ -137,7 +137,7 @@ while True:
         print("Blinks in this session: ",totalsessionBlinks)
         print("Average Blinks Per Minute: ",bpmAverage)
 
-        fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(graph_helper[0], graph_helper[1], graph_helper[2]))
+        fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(statistics[0], statistics[1], statistics[2]))
 
 
 window.close()
