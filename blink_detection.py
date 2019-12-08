@@ -205,8 +205,7 @@ def start_program():
 
     cap.release()
     cv2.destroyAllWindows()
-    import View.py
-    
+
     for i in EAR_data:
         x = dt.datetime.now()
         import os
@@ -215,3 +214,5 @@ def start_program():
         abs_path = os.path.join(script_dir, rel_path)
         sys.stdout = open(rel_path + x.strftime("%Y-%m-%d %H:%M:%S.txt"), 'a')
         print(i)
+
+    import View

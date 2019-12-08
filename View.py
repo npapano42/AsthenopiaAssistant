@@ -1,3 +1,4 @@
+#!  venv/bin/python
 import PySimpleGUI as sg
 import blink_detection
 
