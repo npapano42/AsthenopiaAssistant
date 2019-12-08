@@ -205,7 +205,8 @@ def start_program():
 
     cap.release()
     cv2.destroyAllWindows()
-
+    import View.py
+    
     for i in EAR_data:
         x = dt.datetime.now()
         import os

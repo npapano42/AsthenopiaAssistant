@@ -11,7 +11,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     launches a MatplotLib window that is interactive with the usual Matplotlib controls.
     It turns out to be a rather simple thing to do.  The secret is to add parameter block=False to plt.show()
 """
-sessions = os.listdir("sessions/")
+sessions = sorted(os.listdir("sessions/"))
 plt.rcParams["figure.facecolor"] = "#192734"
 plt.rcParams['text.color'] = '#acc2d0'
 plt.rcParams['axes.labelcolor'] = '#acc2d0'
@@ -19,7 +19,7 @@ plt.rcParams['xtick.color'] = '#acc2d0'
 plt.rcParams['ytick.color'] = '#acc2d0'
 plt.rcParams['toolbar'] = 'None'
 
-def draw_plot(EAR, timestamp, threshold):
+def draw_plot(EAR, timestamp, threshold, canvas):
    # plot
    plt.clf()
    plt.plot(timestamp, EAR, color='w')
@@ -31,15 +31,11 @@ def draw_plot(EAR, timestamp, threshold):
    ax.set_xlabel('Time')
    ax.set_ylabel('Eye Aspect Ratio (EAR)')
    plt.title('Session from ' + timestamp[0].strftime("%H:%M:%S") + ' to ' + timestamp[(len(timestamp) - 1)].strftime("%H:%M:%S"))
-   return plt.gcf()
-   figure_x, figure_y, figure_w, figure_h = fig.bbox.bounds
-
-def draw_figure(canvas, figure, loc=(0, 0)):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.close_event()
-    figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    return figure_canvas_agg
+   figure_canvas_agg = FigureCanvasTkAgg(plt.gcf(), canvas)
+   figure_canvas_agg.close_event()
+   figure_canvas_agg.draw()
+   figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+   return figure_canvas_agg
 
 def extract_data(file):
     session = open(r"sessions/"+file[0], 'r')
@@ -153,7 +149,7 @@ while True:
         window.FindElement('blinks').Update(blinks)
         window.FindElement('average').Update(average)
         print(average)
-        fig_canvas_agg = draw_figure(window['canvas'].TKCanvas, draw_plot(statistics[0], statistics[1], statistics[2]))
+        fig_canvas_agg = draw_plot(statistics[0], statistics[1], statistics[2], window['canvas'].TKCanvas)
 
 
 window.close()
